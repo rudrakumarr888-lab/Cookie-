@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Crumb &amp; Co. — Small-Batch Artisan Cookies</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..800;1,9..40,400..800&family=Fraunces:ital,opsz,wght@0,9..144,400..800;1,9..144,400..800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        colors: {
+          crumb: {
+            50: '#fffbf5',
+            100: '#f7eedd',
+            200: '#edd8b4',
+            300: '#dfba83',
+            400: '#ce9450',
+            500: '#c4622d',
+            600: '#a84720',
+            700: '#7e3019',
+            800: '#4e1c10',
+            900: '#2c0f0a',
+          },
+          darkbg: '#18110e',
+          darksurface: '#241a14',
+          darkborder: '#3a2b22',
+        },
+        fontFamily: {
+          serif: ['Fraunces', 'Georgia', 'serif'],
+          sans: ['DM Sans', 'system-ui', 'sans-serif'],
+        }
+      }
+    }
+  }
+</script>
+<style>
+  body {
+    font-family: 'DM Sans', sans-serif;
+    scroll-behavior: smooth;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  .font-fraunces {
+    font-family: 'Fraunces', serif;
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #ce945088;
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #c4622d;
+  }
+
+  @keyframes floatSlow {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-8px) rotate(3deg); }
+  }
+  .float-slow {
+    animation: floatSlow 4s infinite ease-in-out;
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.05); }
+  }
+  .pulse-glow {
+    animation: pulseGlow 2s infinite ease-in-out;
+  }
+
+  .cookie-card {
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+  }
+  .cookie-card:hover {
+    transform: translateY(-4px);
+  }
+</style>
+</head>
+<body class="bg-crumb-50 text-crumb-900 dark:bg-darkbg dark:text-crumb-100 min-h-screen flex flex-col selection:bg-crumb-500 selection:text-white">
+
+<header class="sticky top-0 z-40 backdrop-blur-md bg-crumb-50/90 dark:bg-darkbg/90 border-b border-crumb-200/60 dark:border-darkborder transition-colors">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 h-18 flex items-center justify-between py-3">
+    <!-- Brand Logo -->
+    <a href="#" class="flex items-center gap-2.5 group">
+      <span class="text-3xl transform group-hover:rotate-12 transition-transform duration-300">🍪</span>
+      <div>
+        <span class="font-fraunces text-2xl font-bold tracking-tight text-crumb-900 dark:text-crumb-50 block leading-none">Crumb &amp; Co.</span>
+        <span class="text-[10px] uppercase tracking-widest text-crumb-500 font-bold block mt-0.5">Small-Batch Bakery</span>
+      </div>
+    </a>
+
+    <!-- Nav Links -->
+    <nav class="hidden md:flex items-center gap-8 font-medium text-sm text-crumb-800 dark:text-crumb-200">
+      <a href="#menu" class="hover:text-crumb-500 dark:hover:text-crumb-300 transition-colors">Today's Batch</a>
+      <a href="#box-builder" class="hover:text-crumb-500 dark:hover:text-crumb-300 transition-colors flex items-center gap-1.5">
+        <span>Build Your Box</span>
+        <span id="nav-box-count" class="bg-crumb-500 text-white text-xs px-2 py-0.5 rounded-full font-bold hidden">0</span>
+      </a>
+      <a href="#our-craft" class="hover:text-crumb-500 dark:hover:text-crumb-300 transition-colors">Our Craft</a>
+      <a href="#info" class="hover:text-crumb-500 dark:hover:text-crumb-300 transition-colors">Pickup &amp; Delivery</a>
+    </nav>
+
+    <!-- Controls -->
+    <div class="flex items-center gap-3">
+      <!-- Dark Mode Toggle -->
+      <button id="theme-toggle" aria-label="Toggle Theme" class="p-2.5 rounded-full bg-crumb-100 dark:bg-darksurface border border-crumb-200 dark:border-darkborder text-crumb-700 dark:text-crumb-200 hover:scale-105 transition-all active:scale-95">
+        <span id="theme-icon">🌙</span>
+      </button>
+
+      <!-- Cart Button -->
+      <a href="#box-builder" class="flex items-center gap-2 bg-crumb-500 hover:bg-crumb-600 text-white font-semibold text-sm px-4 py-2.5 rounded-full shadow-md shadow-crumb-500/20 active:scale-95 transition-all">
+        <span>📦 Box</span>
+        <span id="cart-badge" class="bg-white/20 text-white px-2 py-0.5 rounded-full text-xs font-bold">0</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main class="flex-1">
+  <section class="relative overflow-hidden py-12 md:py-20 bg-gradient-to-b from-crumb-100/50 to-transparent dark:from-darksurface/40 dark:to-transparent">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
+      <div class="grid md:grid-cols-12 gap-8 items-center">
+        
+        <div class="md:col-span-7 space-y-6 text-center md:text-left">
+          <!-- Batch Freshness Banner -->
+          <div class="inline-flex items-center gap-2 bg-crumb-100 dark:bg-darksurface border border-crumb-300/50 dark:border-darkborder px-3.5 py-1.5 rounded-full text-xs font-semibold text-crumb-800 dark:text-crumb-200 shadow-sm">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 pulse-glow"></span>
+            <span>Batch #4 Fresh Out Of Oven · <span class="text-crumb-500 font-bold">Warm &amp; Ready</span></span>
+          </div>
+
+          <h1 class="font-fraunces text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-crumb-900 dark:text-crumb-50 leading-[1.1]">
+            Golden edges.<br>
+            <span class="italic text-crumb-500 font-normal">Gooey centers.</span><br>
+            Zero shortcuts.
+          </h1>
+
+          <p class="text-lg text-crumb-700 dark:text-crumb-300 max-w-xl mx-auto md:mx-0 leading-relaxed">
+            Hand-crafted in small batches with European cultured butter, single-origin chocolate chunks, and a sprinkle of Maldon sea salt. Baked continuously throughout the day.
+          </p>
+
+          <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 pt-2">
+            <a href="#box-builder" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-crumb-500 hover:bg-crumb-600 text-white font-bold text-base px-8 py-3.5 rounded-full shadow-lg shadow-crumb-500/25 hover:shadow-xl hover:-translate-y-0.5 transition-all">
+              <span>Build Custom Box</span>
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            </a>
+            <a href="#menu" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-crumb-100 dark:bg-darksurface hover:bg-crumb-200 dark:hover:bg-darkborder text-crumb-800 dark:text-crumb-200 font-semibold text-base px-6 py-3.5 rounded-full border border-crumb-300/60 dark:border-darkborder transition-all">
+              Browse Flavors
+            </a>
+          </div>
+
+          <!-- Highlights Bar -->
+          <div class="pt-6 border-t border-crumb-200/80 dark:border-darkborder grid grid-cols-3 gap-2 text-center md:text-left">
+            <div>
+              <p class="text-xs uppercase tracking-wider text-crumb-500 font-bold">Butter Quality</p>
+              <p class="font-fraunces text-lg font-bold">84% Fat European</p>
+            </div>
+            <div>
+              <p class="text-xs uppercase tracking-wider text-crumb-500 font-bold">Bundle Deal</p>
+              <p class="font-fraunces text-lg font-bold">Save on 6 or 12</p>
+            </div>
+            <div>
+              <p class="text-xs uppercase tracking-wider text-crumb-500 font-bold">Same Day</p>
+              <p class="font-fraunces text-lg font-bold">Pickup &amp; Local Express</p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Hero Visual Display -->
+        <div class="md:col-span-5 relative flex justify-center">
+          <div class="relative w-72 sm:w-80 h-72 sm:h-80 rounded-3xl bg-gradient-to-tr from-crumb-200 to-crumb-100 dark:from-darksurface dark:to-darkborder p-6 shadow-2xl flex flex-col items-center justify-center border border-crumb-300/40 dark:border-darkborder">
+            <span class="text-8xl sm:text-9xl float-slow select-none filter drop-shadow-xl">🍪</span>
+            <div class="absolute -bottom-4 bg-crumb-900 text-crumb-50 dark:bg-crumb-100 dark:text-crumb-900 px-5 py-2.5 rounded-2xl shadow-xl border border-crumb-700 dark:border-crumb-300 text-xs text-center font-medium">
+              <span class="font-bold text-crumb-300 dark:text-crumb-600 block text-sm">🔥 Fresh Batch Timer</span>
+              Next warm batch drops in <span id="batch-timer" class="font-mono font-bold text-crumb-400 dark:text-crumb-700">14:32</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="menu" class="py-16 max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+      <div>
+        <span class="text-xs uppercase font-bold text-crumb-500 tracking-wider">Baked Today</span>
+        <h2 class="font-fraunces text-3xl sm:text-4xl font-extrabold text-crumb-900 dark:text-crumb-50">Today's Cookie Lineup</h2>
+        <p class="text-crumb-600 dark:text-crumb-400 text-sm mt-1">Individual cookies $3.50 · Automatic discounts applied in the Box Builder!</p>
+      </div>
+
+      <!-- Filter Tabs -->
+      <div id="filter-container" class="flex flex-wrap gap-2">
+        <button data-filter="all" class="filter-btn bg-crumb-500 text-white font-medium text-xs sm:text-sm px-4 py-2 rounded-full transition-all">All Flavors</button>
+        <button data-filter="classic" class="filter-btn bg-crumb-100 dark:bg-darksurface text-crumb-800 dark:text-crumb-200 hover:bg-crumb-200 font-medium text-xs sm:text-sm px-4 py-2 rounded-full transition-all">Classics</button>
+        <button data-filter="chocolate" class="filter-btn bg-crumb-100 dark:bg-darksurface text-crumb-800 dark:text-crumb-200 hover:bg-crumb-200 font-medium text-xs sm:text-sm px-4 py-2 rounded-full transition-all">Chocolate Lovers</button>
+        <button data-filter="nutfree" class="filter-btn bg-crumb-100 dark:bg-darksurface text-crumb-800 dark:text-crumb-200 hover:bg-crumb-200 font-medium text-xs sm:text-sm px-4 py-2 rounded-full transition-all">Nut-Free</button>
+      </div>
+    </div>
+
+    <!-- Cookies Grid -->
+    <div id="menu-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Injected dynamically via JS -->
+    </div>
+  </section>
+
+  <section id="box-builder" class="py-16 bg-crumb-100/70 dark:bg-darksurface/60 border-y border-crumb-200/80 dark:border-darkborder">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="text-center max-w-2xl mx-auto mb-10">
+        <span class="text-xs uppercase font-bold text-crumb-500 tracking-wider">Mix &amp; Match</span>
+        <h2 class="font-fraunces text-3xl sm:text-4xl font-extrabold text-crumb-900 dark:text-crumb-50">Custom Box Builder</h2>
+        <p class="text-crumb-700 dark:text-crumb-300 text-sm mt-2">
+          Fill up a box to unlock bundle savings! <br>
+          <span class="font-semibold text-crumb-600 dark:text-crumb-300">Half Dozen (6 Cookies): $18.00</span> ($3.00/ea) · <span class="font-semibold text-crumb-600 dark:text-crumb-300">Full Dozen (12 Cookies): $32.00</span> ($2.66/ea)
+        </p>
+      </div>
+
+      <div class="grid lg:grid-cols-12 gap-8 items-start">
+        <!-- Cookie Selection Picker -->
+        <div class="lg:col-span-7 bg-crumb-50 dark:bg-darkbg p-6 rounded-3xl border border-crumb-200 dark:border-darkborder shadow-sm">
+          <h3 class="font-fraunces text-xl font-bold mb-4 flex items-center justify-between">
+            <span>1. Select Your Cookies</span>
+            <button id="clear-box-btn" class="text-xs text-crumb-500 hover:underline font-normal">Clear all</button>
+          </h3>
+          <div id="builder-items" class="space-y-3 max-h-[460px] overflow-y-auto pr-1">
+            <!-- Dynamic selection list -->
+          </div>
+        </div>
+
+        <!-- Live Box Visualizer & Checkout -->
+        <div class="lg:col-span-5 bg-crumb-50 dark:bg-darkbg p-6 rounded-3xl border border-crumb-200 dark:border-darkborder shadow-md sticky top-24">
+          <h3 class="font-fraunces text-xl font-bold mb-2">2. Your Bakery Box</h3>
+
+          <!-- Progress Bar towards next discount slot -->
+          <div class="mb-4">
+            <div class="flex justify-between text-xs font-semibold mb-1">
+              <span id="box-progress-label">0 cookies in box</span>
+              <span id="box-discount-badge" class="text-crumb-500 font-bold">Select 6 for Half-Dozen Deal</span>
+            </div>
+            <div class="w-full h-3 bg-crumb-200 dark:bg-darkborder rounded-full overflow-hidden">
+              <div id="box-progress-bar" class="h-full bg-crumb-500 transition-all duration-300 w-0"></div>
+            </div>
+          </div>
+
+          <!-- Box Grid Slots Simulation -->
+          <div id="box-slots-grid" class="grid grid-cols-6 gap-2 p-3 bg-crumb-100 dark:bg-darksurface rounded-2xl mb-6 min-h-[90px] border border-dashed border-crumb-300 dark:border-darkborder items-center justify-items-center">
+            <!-- Slots rendered via JS -->
+          </div>
+
+          <!-- Order Summary Breakdown -->
+          <div class="space-y-2 border-t border-crumb-200 dark:border-darkborder pt-4 text-sm">
+            <div class="flex justify-between text-crumb-700 dark:text-crumb-300">
+              <span>Subtotal (Single Rate):</span>
+              <span id="summary-raw-price">$0.00</span>
+            </div>
+            <div class="flex justify-between text-emerald-600 dark:text-emerald-400 font-medium">
+              <span>Bundle Discount:</span>
+              <span id="summary-discount">-$0.00</span>
+            </div>
+            <div class="flex justify-between text-lg font-bold text-crumb-900 dark:text-crumb-50 border-t border-crumb-200 dark:border-darkborder pt-2">
+              <span>Estimated Total:</span>
+              <span id="summary-final-price">$0.00</span>
+            </div>
+          </div>
+
+          <!-- Fulfillment & Order Button -->
+          <div class="mt-6 space-y-3">
+            <div class="grid grid-cols-2 gap-2 p-1 bg-crumb-100 dark:bg-darksurface rounded-xl">
+              <button id="type-pickup" class="fulfillment-option py-2 text-xs font-bold rounded-lg bg-crumb-500 text-white transition-all shadow-sm">
+                🏬 Store Pickup
+              </button>
+              <button id="type-delivery" class="fulfillment-option py-2 text-xs font-bold rounded-lg text-crumb-700 dark:text-crumb-300 hover:bg-crumb-200/50 dark:hover:bg-darkborder transition-all">
+                🚚 Express Delivery
+              </button>
+            </div>
+
+            <button id="checkout-btn" class="w-full bg-crumb-500 hover:bg-crumb-600 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-crumb-500/25 active:scale-95 transition-all flex items-center justify-center gap-2">
+              <span>Reserve My Box</span>
+              <span class="text-sm">→</span>
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="our-craft" class="py-16 max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <span class="text-xs uppercase font-bold text-crumb-500 tracking-wider">Our Philosophy</span>
+      <h2 class="font-fraunces text-3xl sm:text-4xl font-extrabold text-crumb-900 dark:text-crumb-50">Why Crumb &amp; Co. Tastes Better</h2>
+      <p class="text-crumb-700 dark:text-crumb-300 text-sm mt-2">We refuse to compromise on quality, process, or time.</p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-8">
+      <div class="bg-crumb-100/50 dark:bg-darksurface p-6 rounded-3xl border border-crumb-200/80 dark:border-darkborder">
+        <div class="w-12 h-12 bg-crumb-200 dark:bg-darkborder rounded-2xl flex items-center justify-center text-2xl mb-4">🧈</div>
+        <h3 class="font-fraunces text-xl font-bold mb-2">High-Fat Cultured Butter</h3>
+        <p class="text-crumb-700 dark:text-crumb-300 text-sm leading-relaxed">
+          We use 84% butterfat European-style butter brown-steeped daily. This creates rich caramel notes and that unmistakable soft middle.
+        </p>
+      </div>
+
+      <div class="bg-crumb-100/50 dark:bg-darksurface p-6 rounded-3xl border border-crumb-200/80 dark:border-darkborder">
+        <div class="w-12 h-12 bg-crumb-200 dark:bg-darkborder rounded-2xl flex items-center justify-center text-2xl mb-4">⏱️</div>
+        <h3 class="font-fraunces text-xl font-bold mb-2">48-Hour Cold Fermentation</h3>
+        <p class="text-crumb-700 dark:text-crumb-300 text-sm leading-relaxed">
+          Dough rests in cold aging for two full days before hitting the oven. This develops complex flavor structure and ultimate chew.
+        </p>
+      </div>
+
+      <div class="bg-crumb-100/50 dark:bg-darksurface p-6 rounded-3xl border border-crumb-200/80 dark:border-darkborder">
+        <div class="w-12 h-12 bg-crumb-200 dark:bg-darkborder rounded-2xl flex items-center justify-center text-2xl mb-4">🍫</div>
+        <h3 class="font-fraunces text-xl font-bold mb-2">Hand-Chopped Chocolate</h3>
+        <p class="text-crumb-700 dark:text-crumb-300 text-sm leading-relaxed">
+          No uniform chips here. We hand-chop whole blocks of 70% Valrhona dark chocolate for puddles of melted cacao in every single bite.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="info" class="py-16 bg-crumb-100/40 dark:bg-darksurface/30 border-t border-crumb-200/80 dark:border-darkborder">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="grid md:grid-cols-2 gap-8 items-center">
+        
+        <div class="space-y-6">
+          <span class="text-xs uppercase font-bold text-crumb-500 tracking-wider">Visit The Bakery</span>
+          <h2 class="font-fraunces text-3xl sm:text-4xl font-extrabold text-crumb-900 dark:text-crumb-50">Warm cookies straight from the counter.</h2>
+          <p class="text-crumb-700 dark:text-crumb-300">
+            Stop by our cozy shop in the district or order online for guaranteed pickup. When today's batch sells out, doors close for the day!
+          </p>
+
+          <div class="space-y-3 text-sm">
+            <div class="flex items-start gap-3">
+              <span class="text-lg">📍</span>
+              <div>
+                <p class="font-bold text-crumb-900 dark:text-crumb-100">123 Sugar Lane, Suite B</p>
+                <p class="text-crumb-600 dark:text-crumb-400">Bakery District, Cityville</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-3">
+              <span class="text-lg">🕒</span>
+              <div>
+                <p class="font-bold text-crumb-900 dark:text-crumb-100">Store Hours</p>
+                <p class="text-crumb-600 dark:text-crumb-400">Tuesday – Sunday: 7:00 AM – 3:00 PM (or sold out)</p>
+                <p class="text-xs text-crumb-500 font-semibold mt-0.5">Closed Mondays for deep cleaning & dough prep</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Warm-up Tips Card -->
+        <div class="bg-crumb-50 dark:bg-darkbg p-6 rounded-3xl border border-crumb-200 dark:border-darkborder shadow-sm space-y-4">
+          <div class="flex items-center gap-3">
+            <span class="text-3xl">🔥</span>
+            <div>
+              <h3 class="font-fraunces text-lg font-bold">Pro Warm-Up Guide</h3>
+              <p class="text-xs text-crumb-600 dark:text-crumb-400">Recreate the warm bakery oven feel at home</p>
+            </div>
+          </div>
+          <div class="space-y-2 text-xs text-crumb-700 dark:text-crumb-300">
+            <div class="p-3 bg-crumb-100 dark:bg-darksurface rounded-xl">
+              <span class="font-bold text-crumb-800 dark:text-crumb-200">Conventional Oven (Best):</span>
+              <p class="mt-0.5">Preheat to 350°F (175°C). Place cookies on baking sheet for 3-4 minutes until chocolate glistens.</p>
+            </div>
+            <div class="p-3 bg-crumb-100 dark:bg-darksurface rounded-xl">
+              <span class="font-bold text-crumb-800 dark:text-crumb-200">Microwave (Quick):</span>
+              <p class="mt-0.5">Microwave on medium power for 10-12 seconds alongside a moist paper towel to preserve soft center.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="bg-crumb-900 text-crumb-200 py-12 border-t border-crumb-800">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+    <div>
+      <div class="flex items-center justify-center md:justify-start gap-2 mb-1">
+        <span class="text-2xl">🍪</span>
+        <span class="font-fraunces text-xl font-bold text-white">Crumb &amp; Co.</span>
+      </div>
+      <p class="text-xs text-crumb-400">Small-Batch Artisan Cookies · Fresh Daily</p>
+    </div>
+    <p class="text-xs text-crumb-400">© 2026 Crumb &amp; Co. Bakery LLC. All rights reserved.</p>
+  </div>
+</footer>
+
+<div id="flavor-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+  <div id="modal-box" class="bg-crumb-50 dark:bg-darkbg max-w-lg w-full rounded-3xl p-6 border border-crumb-200 dark:border-darkborder shadow-2xl transform scale-95 transition-transform duration-300 relative">
+    <button id="close-modal" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-crumb-200 dark:bg-darksurface text-crumb-800 dark:text-crumb-200 flex items-center justify-center text-sm font-bold hover:scale-105 transition-transform">✕</button>
+    <div id="modal-content">
+      <!-- Dynamic modal details -->
+    </div>
+  </div>
+</div>
+
+<div id="checkout-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+  <div id="checkout-box" class="bg-crumb-50 dark:bg-darkbg max-w-md w-full rounded-3xl p-6 border border-crumb-200 dark:border-darkborder shadow-2xl transform scale-95 transition-transform duration-300">
+    <h3 class="font-fraunces text-2xl font-bold mb-2">Complete Reservation</h3>
+    <p class="text-xs text-crumb-600 dark:text-crumb-400 mb-4">We will reserve your selected batch immediately.</p>
+
+    <form id="reservation-form" class="space-y-4">
+      <div>
+        <label class="block text-xs font-bold uppercase text-crumb-700 dark:text-crumb-300 mb-1">Your Full Name</label>
+        <input type="text" id="cust-name" required placeholder="Jane Doe" class="w-full px-4 py-2.5 rounded-xl border border-crumb-300 dark:border-darkborder bg-white dark:bg-darksurface text-sm focus:outline-none focus:ring-2 focus:ring-crumb-500">
+      </div>
+      <div>
+        <label class="block text-xs font-bold uppercase text-crumb-700 dark:text-crumb-300 mb-1">Phone Number (For Ready SMS)</label>
+        <input type="tel" id="cust-phone" required placeholder="(555) 019-2834" class="w-full px-4 py-2.5 rounded-xl border border-crumb-300 dark:border-darkborder bg-white dark:bg-darksurface text-sm focus:outline-none focus:ring-2 focus:ring-crumb-500">
+      </div>
+      <div>
+        <label class="block text-xs font-bold uppercase text-crumb-700 dark:text-crumb-300 mb-1">Preferred Time Slot</label>
+        <select id="cust-time" class="w-full px-4 py-2.5 rounded-xl border border-crumb-300 dark:border-darkborder bg-white dark:bg-darksurface text-sm focus:outline-none focus:ring-2 focus:ring-crumb-500">
+          <option>Today: 8:30 AM – 9:00 AM</option>
+          <option>Today: 10:00 AM – 10:30 AM</option>
+          <option>Today: 12:00 PM – 12:30 PM</option>
+          <option>Today: 2:00 PM – 2:30 PM</option>
+        </select>
+      </div>
+
+      <div class="border-t border-crumb-200 dark:border-darkborder pt-3">
+        <div class="flex justify-between text-base font-bold mb-3">
+          <span>Total Due At Counter:</span>
+          <span id="modal-order-total">$0.00</span>
+        </div>
+        <div class="flex gap-2">
+          <button type="button" id="cancel-checkout" class="w-1/2 py-2.5 text-sm font-semibold rounded-xl bg-crumb-200 dark:bg-darksurface hover:bg-crumb-300 transition-all">Cancel</button>
+          <button type="submit" class="w-1/2 py-2.5 text-sm font-bold rounded-xl bg-crumb-500 hover:bg-crumb-600 text-white shadow-md transition-all">Confirm</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="status-toast" class="fixed bottom-4 right-4 z-40 max-w-sm bg-crumb-900 text-crumb-50 dark:bg-crumb-100 dark:text-crumb-900 p-4 rounded-2xl shadow-2xl border border-crumb-700 dark:border-crumb-300 transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-3">
+  <span class="text-2xl animate-bounce">📦</span>
+  <div class="text-xs">
+    <p class="font-bold text-crumb-300 dark:text-crumb-700" id="toast-title">Order Confirmed!</p>
+    <p id="toast-desc">Your cookie box is being prepped by the baker.</p>
+  </div>
+</div>
+
+<script>
+  // Cookie Data
+  const COOKIES = [
+    {
+      id: "classic-choc",
+      name: "Classic Chocolate Chunk",
+      emoji: "🍪",
+      category: "classic",
+      stock: 12,
+      price: 3.50,
+      shortDesc: "Brown butter dough, 70% Valrhona dark chocolate chunks, flaky Maldon sea salt.",
+      fullDesc: "Our cornerstone flavor. Crafted with 48-hour cold-fermented brown butter dough, packed with hand-chopped 70% dark chocolate chunks and finished with a pinch of Maldon sea salt flakes.",
+      ingredients: ["Brown Butter", "Valrhona Chocolate", "Unbleached Flour", "Organic Eggs", "Maldon Salt"],
+      tags: ["Best Seller", "Nut-Free"],
+      calories: "380 kcal"
+    },
+    {
+      id: "double-fudge",
+      name: "Double Chocolate Fudge",
+      emoji: "🍫",
+      category: "chocolate",
+      stock: 8,
+      price: 3.50,
+      shortDesc: "Fudgy Dutch cocoa dough, white chocolate pockets & espresso infusion.",
+      fullDesc: "Rich, dense chocolate dough enhanced with espresso to deepen cacao notes, stuffed with creamy Belgian white chocolate chips.",
+      ingredients: ["Dutch Cocoa", "White Chocolate", "Espresso Powder", "Cultured Butter"],
+      tags: ["Rich & Fudgy"],
+      calories: "410 kcal"
+    },
+    {
+      id: "oatmeal-cinnamon",
+      name: "Salted Caramel Oatmeal",
+      emoji: "🌾",
+      category: "classic",
+      stock: 5,
+      price: 3.50,
+      shortDesc: "Toasted rolled oats, house cinnamon spice blend, organic caramel drizzle.",
+      fullDesc: "Old-fashioned organic rolled oats toasted in butter, blended with warm Vietnamese cinnamon and drizzled with gooey house caramel.",
+      ingredients: ["Rolled Oats", "Vietnamese Cinnamon", "House Caramel", "Brown Sugar"],
+      tags: ["Nut-Free", "Warm Spice"],
+      calories: "360 kcal"
+    },
+    {
+      id: "snickerdoodle-bliss",
+      name: "Vanilla Bean Snickerdoodle",
+      emoji: "✨",
+      category: "classic",
+      stock: 14,
+      price: 3.50,
+      shortDesc: "Pillowy, tangy middle coated in Madagascar vanilla & cinnamon sugar.",
+      fullDesc: "Melt-in-your-mouth soft center cookie with real Madagascar bourbon vanilla paste, rolled in aromatic cinnamon sugar.",
+      ingredients: ["Madagascar Vanilla", "Cream of Tartar", "Cinnamon Sugar", "Butter"],
+      tags: ["Pillowy Soft", "Nut-Free"],
+      calories: "340 kcal"
+    },
+    {
+      id: "peanut-butter-crunch",
+      name: "Peanut Butter Crunch",
+      emoji: "🥜",
+      category: "classic",
+      stock: 6,
+      price: 3.50,
+      shortDesc: "Roasty roasted peanut center with crisp edges and chocolate drizzle.",
+      fullDesc: "Made with 100% natural roasted peanut butter, crisp caramelized edges, and a dark chocolate drizzle across the top.",
+      ingredients: ["Roasted Peanut Butter", "Dark Chocolate", "Sea Salt", "Cane Sugar"],
+      tags: ["Contains Nuts"],
+      calories: "420 kcal"
+    },
+    {
+      id: "lemon-ricotta",
+      name: "Meyer Lemon Sugar",
+      emoji: "🍋",
+      category: "classic",
+      stock: 10,
+      price: 3.50,
+      shortDesc: "Zesty fresh Meyer lemon zest with soft glaze and edible botanical dust.",
+      fullDesc: "Bright and cheerful. Infused with freshly grated Meyer lemon zest and topped with a delicate lemon glaze.",
+      ingredients: ["Meyer Lemon Zest", "Powdered Sugar", "Pure Lemon Oil", "Butter"],
+      tags: ["Citrus", "Nut-Free"],
+      calories: "330 kcal"
+    }
+  ];
+
+  // State Management
+  let cart = {}; // { id: count }
+  let currentFilter = 'all';
+  let fulfillmentType = 'pickup'; // 'pickup' or 'delivery'
+
+  // Initialize Application
+  document.addEventListener("DOMContentLoaded", () => {
+    initTheme();
+    renderMenu();
+    renderBuilder();
+    startBatchTimer();
+    bindEvents();
+  });
+
+  function initTheme() {
+    const isDark = localStorage.getItem('crumb-theme') === 'dark' || 
+      (!('crumb-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+      document.getElementById('theme-icon').textContent = '☀️';
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.getElementById('theme-icon').textContent = '🌙';
+    }
+  }
+
+  document.getElementById('theme-toggle').addEventListener('click', () => {
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('crumb-theme', isDark ? 'dark' : 'light');
+    document.getElementById('theme-icon').textContent = isDark ? '☀️' : '🌙';
+  });
+
+  function renderMenu() {
+    const grid = document.getElementById('menu-grid');
+    grid.innerHTML = '';
+
+    const filtered = COOKIES.filter(c => {
+      if (currentFilter === 'all') return true;
+      if (currentFilter === 'nutfree') return c.tags.includes('Nut-Free');
+      return c.category === currentFilter;
+    });
+
+    filtered.forEach(cookie => {
+      const card = document.createElement('div');
+      card.className = "cookie-card bg-crumb-50 dark:bg-darkbg border border-crumb-200/80 dark:border-darkborder rounded-3xl p-5 flex flex-col justify-between shadow-sm relative overflow-hidden group";
+
+      card.innerHTML = `
+        <div>
+          <!-- Top Tags & Stock Indicator -->
+          <div class="flex items-center justify-between gap-2 mb-3">
+            <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-crumb-100 dark:bg-darksurface text-crumb-700 dark:text-crumb-300 border border-crumb-200/60 dark:border-darkborder">
+              ${cookie.tags[0]}
+            </span>
+            <span class="text-[11px] font-semibold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded-full border border-amber-200 dark:border-amber-800">
+              Only ${cookie.stock} left in batch
+            </span>
+          </div>
+
+          <!-- Emoji Visual -->
+          <div class="text-6xl text-center my-3 transition-transform duration-300 group-hover:scale-110 select-none">
+            ${cookie.emoji}
+          </div>
+
+          <h3 class="font-fraunces text-xl font-bold text-crumb-900 dark:text-crumb-50 cursor-pointer hover:text-crumb-500 transition-colors" onclick="openModal('${cookie.id}')">
+            ${cookie.name}
+          </h3>
+          <p class="text-xs text-crumb-600 dark:text-crumb-400 mt-1 line-clamp-2">
+            ${cookie.shortDesc}
+          </p>
+        </div>
+
+        <div class="pt-4 mt-4 border-t border-crumb-200/60 dark:border-darkborder flex items-center justify-between">
+          <div>
+            <span class="text-lg font-bold text-crumb-900 dark:text-crumb-50">$${cookie.price.toFixed(2)}</span>
+            <span class="text-[10px] block text-crumb-500">each</span>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button onclick="openModal('${cookie.id}')" class="text-xs font-semibold px-3 py-2 rounded-xl bg-crumb-100 dark:bg-darksurface text-crumb-800 dark:text-crumb-200 hover:bg-crumb-200 transition-all">
+              Details
+            </button>
+            <button onclick="addToCart('${cookie.id}')" class="text-xs font-bold px-4 py-2 rounded-xl bg-crumb-500 hover:bg-crumb-600 text-white shadow-md active:scale-95 transition-all">
+              + Add
+            </button>
+          </div>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  function renderBuilder() {
+    const container = document.getElementById('builder-items');
+    container.innerHTML = '';
+
+    COOKIES.forEach(cookie => {
+      const count = cart[cookie.id] || 0;
+      const item = document.createElement('div');
+      item.className = "flex items-center justify-between p-3 rounded-2xl bg-crumb-100/60 dark:bg-darksurface border border-crumb-200/50 dark:border-darkborder";
+
+      item.innerHTML = `
+        <div class="flex items-center gap-3">
+          <span class="text-2xl">${cookie.emoji}</span>
+          <div>
+            <p class="font-fraunces font-bold text-sm text-crumb-900 dark:text-crumb-50">${cookie.name}</p>
+            <p class="text-[11px] text-crumb-500">$${cookie.price.toFixed(2)} each</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button onclick="updateQty('${cookie.id}', -1)" class="w-8 h-8 rounded-full bg-crumb-200 dark:bg-darkborder text-crumb-900 dark:text-crumb-100 font-bold flex items-center justify-center hover:bg-crumb-300 transition-colors">-</button>
+          <span class="w-6 text-center font-bold text-sm">${count}</span>
+          <button onclick="updateQty('${cookie.id}', 1)" class="w-8 h-8 rounded-full bg-crumb-500 text-white font-bold flex items-center justify-center hover:bg-crumb-600 transition-colors">+</button>
+        </div>
+      `;
+      container.appendChild(item);
+    });
+
+    updateBoxSummary();
+  }
+
+  function updateBoxSummary() {
+    let totalCount = 0;
+    let rawPrice = 0;
+
+    Object.keys(cart).forEach(id => {
+      const cookie = COOKIES.find(c => c.id === id);
+      const qty = cart[id];
+      totalCount += qty;
+      rawPrice += qty * cookie.price;
+    });
+
+    // Bundle Pricing calculation
+    const fullDozens = Math.floor(totalCount / 12);
+    const remainderAfter12 = totalCount % 12;
+    const halfDozens = Math.floor(remainderAfter12 / 6);
+    const singles = remainderAfter12 % 6;
+
+    const finalPrice = (fullDozens * 32.00) + (halfDozens * 18.00) + (singles * 3.50);
+    const discount = rawPrice - finalPrice;
+
+    // Update UI Badges
+    document.getElementById('cart-badge').textContent = totalCount;
+    document.getElementById('nav-box-count').textContent = totalCount;
+    if (totalCount > 0) {
+      document.getElementById('nav-box-count').classList.remove('hidden');
+    } else {
+      document.getElementById('nav-box-count').classList.add('hidden');
+    }
+
+    document.getElementById('summary-raw-price').textContent = `$${rawPrice.toFixed(2)}`;
+    document.getElementById('summary-discount').textContent = `-$${discount.toFixed(2)}`;
+    document.getElementById('summary-final-price').textContent = `$${finalPrice.toFixed(2)}`;
+
+    // Update Progress Bar
+    const progressBar = document.getElementById('box-progress-bar');
+    const progressLabel = document.getElementById('box-progress-label');
+    const discountBadge = document.getElementById('box-discount-badge');
+
+    progressLabel.textContent = `${totalCount} cookie${totalCount === 1 ? '' : 's'} in box`;
+
+    if (totalCount < 6) {
+      const pct = (totalCount / 6) * 100;
+      progressBar.style.width = `${pct}%`;
+      discountBadge.textContent = `Add ${6 - totalCount} more for Half-Dozen Deal ($18)`;
+    } else if (totalCount < 12) {
+      const pct = (totalCount / 12) * 100;
+      progressBar.style.width = `${pct}%`;
+      discountBadge.textContent = `Add ${12 - totalCount} more for Full Dozen Deal ($32)`;
+    } else {
+      progressBar.style.width = `100%`;
+      discountBadge.textContent = `🎉 Max Bundle Discount Unlocked!`;
+    }
+
+    // Render Box Visual Slots
+    const slotsGrid = document.getElementById('box-slots-grid');
+    slotsGrid.innerHTML = '';
+    
+    let boxEmojis = [];
+    Object.keys(cart).forEach(id => {
+      const cookie = COOKIES.find(c => c.id === id);
+      for (let i = 0; i < cart[id]; i++) {
+        boxEmojis.push(cookie.emoji);
+      }
+    });
+
+    const displaySlotsCount = Math.max(6, Math.ceil(boxEmojis.length / 6) * 6);
+    for (let i = 0; i < displaySlotsCount; i++) {
+      const slot = document.createElement('div');
+      slot.className = "w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-crumb-50 dark:bg-darkbg border border-crumb-300/60 dark:border-darkborder flex items-center justify-center text-xl shadow-inner select-none";
+      if (boxEmojis[i]) {
+        slot.textContent = boxEmojis[i];
+      } else {
+        slot.innerHTML = `<span class="text-crumb-300 dark:text-darkborder text-xs">•</span>`;
+      }
+      slotsGrid.appendChild(slot);
+    }
+  }
+
+  function addToCart(id) {
+    cart[id] = (cart[id] || 0) + 1;
+    renderBuilder();
+    showToast("Added to Box", "Cookie added to your bakery order.");
+  }
+
+  function updateQty(id, delta) {
+    if (!cart[id]) cart[id] = 0;
+    cart[id] = Math.max(0, cart[id] + delta);
+    if (cart[id] === 0) delete cart[id];
+    renderBuilder();
+  }
+
+  document.getElementById('filter-container').addEventListener('click', (e) => {
+    if (e.target.classList.contains('filter-btn')) {
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.className = "filter-btn bg-crumb-100 dark:bg-darksurface text-crumb-800 dark:text-crumb-200 hover:bg-crumb-200 font-medium text-xs sm:text-sm px-4 py-2 rounded-full transition-all";
+      });
+      e.target.className = "filter-btn bg-crumb-500 text-white font-medium text-xs sm:text-sm px-4 py-2 rounded-full transition-all";
+      currentFilter = e.target.dataset.filter;
+      renderMenu();
+    }
+  });
+
+  document.getElementById('clear-box-btn').addEventListener('click', () => {
+    cart = {};
+    renderBuilder();
+  });
+
+  document.getElementById('type-pickup').addEventListener('click', () => {
+    fulfillmentType = 'pickup';
+    document.getElementById('type-pickup').className = "fulfillment-option py-2 text-xs font-bold rounded-lg bg-crumb-500 text-white transition-all shadow-sm";
+    document.getElementById('type-delivery').className = "fulfillment-option py-2 text-xs font-bold rounded-lg text-crumb-700 dark:text-crumb-300 hover:bg-crumb-200/50 dark:hover:bg-darkborder transition-all";
+  });
+
+  document.getElementById('type-delivery').addEventListener('click', () => {
+    fulfillmentType = 'delivery';
+    document.getElementById('type-delivery').className = "fulfillment-option py-2 text-xs font-bold rounded-lg bg-crumb-500 text-white transition-all shadow-sm";
+    document.getElementById('type-pickup').className = "fulfillment-option py-2 text-xs font-bold rounded-lg text-crumb-700 dark:text-crumb-300 hover:bg-crumb-200/50 dark:hover:bg-darkborder transition-all";
+  });
+
+  function openModal(id) {
+    const cookie = COOKIES.find(c => c.id === id);
+    if (!cookie) return;
+
+    const modalContent = document.getElementById('modal-content');
+    modalContent.innerHTML = `
+      <div class="text-center">
+        <span class="text-7xl block mb-2 select-none">${cookie.emoji}</span>
+        <span class="text-xs uppercase font-bold text-crumb-500 tracking-wider">${cookie.category}</span>
+        <h3 class="font-fraunces text-2xl font-bold text-crumb-900 dark:text-crumb-50 mt-1">${cookie.name}</h3>
+        <p class="text-xs text-crumb-500 font-semibold mb-4">${cookie.calories} · Freshly Baked</p>
+      </div>
+
+      <p class="text-sm text-crumb-700 dark:text-crumb-300 leading-relaxed mb-4">
+        ${cookie.fullDesc}
+      </p>
+
+      <div class="mb-4">
+        <h4 class="text-xs font-bold uppercase text-crumb-800 dark:text-crumb-200 mb-2">Key Ingredients</h4>
+        <div class="flex flex-wrap gap-1.5">
+          ${cookie.ingredients.map(ing => `<span class="text-xs bg-crumb-100 dark:bg-darksurface px-2.5 py-1 rounded-lg text-crumb-700 dark:text-crumb-300 border border-crumb-200/60 dark:border-darkborder">${ing}</span>`).join('')}
+        </div>
+      </div>
+
+      <div class="pt-4 border-t border-crumb-200 dark:border-darkborder flex items-center justify-between">
+        <span class="text-xl font-bold text-crumb-900 dark:text-crumb-50">$${cookie.price.toFixed(2)}</span>
+        <button onclick="addToCart('${cookie.id}'); closeModal();" class="bg-crumb-500 hover:bg-crumb-600 text-white font-bold text-sm px-6 py-2.5 rounded-xl shadow-md transition-all">
+          Add To My Box
+        </button>
+      </div>
+    `;
+
+    const modal = document.getElementById('flavor-modal');
+    modal.classList.remove('opacity-0', 'pointer-events-none');
+    document.getElementById('modal-box').classList.remove('scale-95');
+  }
+
+  function closeModal() {
+    const modal = document.getElementById('flavor-modal');
+    modal.classList.add('opacity-0', 'pointer-events-none');
+    document.getElementById('modal-box').classList.add('scale-95');
+  }
+
+  document.getElementById('close-modal').addEventListener('click', closeModal);
+
+  // Checkout modal
+  document.getElementById('checkout-btn').addEventListener('click', () => {
+    let totalCount = Object.values(cart).reduce((a, b) => a + b, 0);
+    if (totalCount === 0) {
+      showToast("Box Empty!", "Please select at least one cookie before reserving.");
+      return;
+    }
+
+    const priceText = document.getElementById('summary-final-price').textContent;
+    document.getElementById('modal-order-total').textContent = priceText;
+
+    const modal = document.getElementById('checkout-modal');
+    modal.classList.remove('opacity-0', 'pointer-events-none');
+    document.getElementById('checkout-box').classList.remove('scale-95');
+  });
+
+  document.getElementById('cancel-checkout').addEventListener('click', () => {
+    const modal = document.getElementById('checkout-modal');
+    modal.classList.add('opacity-0', 'pointer-events-none');
+    document.getElementById('checkout-box').classList.add('scale-95');
+  });
+
+  document.getElementById('reservation-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = document.getElementById('cust-name').value;
+    
+    // Close modal
+    const modal = document.getElementById('checkout-modal');
+    modal.classList.add('opacity-0', 'pointer-events-none');
+
+    // Show persistent order toast
+    showToast(`Order Confirmed, ${name}! 🎉`, `Your box is reserved for pickup. See you at the counter!`);
+
+    // Reset Cart
+    cart = {};
+    renderBuilder();
+  });
+
+  function showToast(title, message) {
+    const toast = document.getElementById('status-toast');
+    document.getElementById('toast-title').textContent = title;
+    document.getElementById('toast-desc').textContent = message;
+
+    toast.classList.remove('translate-y-20', 'opacity-0');
+    setTimeout(() => {
+      toast.classList.add('translate-y-20', 'opacity-0');
+    }, 4500);
+  }
+
+  function startBatchTimer() {
+    let duration = 14 * 60 + 32; // 14 mins 32 secs
+    const timerEl = document.getElementById('batch-timer');
+
+    setInterval(() => {
+      if (duration <= 0) duration = 20 * 60;
+      const mins = Math.floor(duration / 60);
+      const secs = duration % 60;
+      timerEl.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+      duration--;
+    }, 1000);
+  }
+
+  function bindEvents() {
+    window.addEventListener('click', (e) => {
+      if (e.target.id === 'flavor-modal') closeModal();
+      if (e.target.id === 'checkout-modal') {
+        document.getElementById('checkout-modal').classList.add('opacity-0', 'pointer-events-none');
+      }
+    });
+  }
+</script>
+</body>
+</html>
